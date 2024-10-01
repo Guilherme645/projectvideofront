@@ -1,0 +1,62 @@
+<div class="video-container" style="text-align: center; margin: 20px;">
+  <h2>Selecione um Vídeo</h2>
+
+  <!-- Dropdown de seleção de vídeo -->
+  <div class="select-container" style="display: inline-block; margin-bottom: 20px; width: 100%;">
+    <mat-form-field appearance="fill" class="video-select" style="width: 300px;">
+      <mat-label>Escolha um vídeo</mat-label>
+      <mat-select [(value)]="selectedVideo">
+        <mat-option *ngFor="let video of videos" [value]="video">
+          {{ video }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div *ngIf="selectedVideo" class="video-actions" style="margin-top: 20px;">
+    <button mat-raised-button color="primary" (click)="playVideo(selectedVideo)" style="margin-right: 10px;">
+      Reproduzir Vídeo
+    </button>
+
+    <button mat-raised-button color="accent" (click)="abrirDialogoCorte(selectedVideo)">
+      Cortar Vídeo
+    </button>
+  </div>
+</div>
+
+<!-- Exibe o vídeo selecionado -->
+<div *ngIf="selectedVideoUrl" class="video-player-container" style="display: flex; justify-content: center; margin-top: 20px;">
+  <mat-card style="width: 400px;">
+    <mat-card-header>
+      <mat-card-title>Reproduzindo Vídeo</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <video width="100%" height="240" controls (timeupdate)="updateCurrentTime($event)">
+        <source [src]="selectedVideoUrl" type="video/mp4" />
+        Seu navegador não suporta o elemento de vídeo.
+      </video>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- Controle de corte com slider -->
+<div class="section cut-range" style="text-align: center; margin-top: 20px;">
+  <h2>Definir Corte de Vídeo</h2>
+  <ngx-slider [(value)]="range[0]" [(highValue)]="range[1]" [options]="sliderOptions" class="cut-slider" style="width: 300px; margin: 0 auto;"></ngx-slider>
+
+  <div class="time-inputs" style="margin-top: 20px;">
+    <div class="control" style="display: inline-block; margin-right: 20px;">
+      <label for="startTime">Início do corte</label>
+      <input type="number" [(ngModel)]="range[0]" step="0.01" (change)="seekTo(range[0])" style="width: 100px;" />
+    </div>
+
+    <div class="control" style="display: inline-block;">
+      <label for="endTime">Final do corte</label>
+      <input type="number" [(ngModel)]="range[1]" step="0.01" (change)="seekTo(range[1])" style="width: 100px;" />
+    </div>
+  </div>
+
+  <p style="margin-top: 10px;">Tempo atual: {{ currentTime }}s</p>
+
+  <button mat-raised-button color="primary" (click)="onCutAudio()" style="margin-top: 10px;">Fazer Corte</button>
+</div>

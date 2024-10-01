@@ -1,0 +1,27 @@
+.video-container {
+    margin: 20px 0;
+  }
+  
+  .video-actions {
+    margin: 10px 0;
+  }
+  
+  .video-player-container {
+    margin: 20px 0;
+  }
+  
+  .cut-range {
+    margin: 20px 0;
+  }
+  
+  .time-inputs {
+    display: flex;
+    justify-content: space-between;
+    max-width: 300px;
+  }
+  
+  .control {
+    display: flex;
+    flex-direction: column;
+  }
+  
