@@ -1,0 +1,15 @@
+/* Define as propriedades dos cursores */
+.cursor {
+  width: 3px;
+  height: 100%;
+  background-color: red;
+  pointer-events: none;
+}
+
+#cursor-start {
+  background-color: green;
+}
+
+#cursor-end {
+  background-color: blue;
+}

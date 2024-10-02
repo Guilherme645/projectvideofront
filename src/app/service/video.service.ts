@@ -27,7 +27,7 @@ export class VideoService {
       .set('fileName', fileName)
       .set('startSeconds', startSeconds.toString())
       .set('durationSeconds', durationSeconds.toString());
-  
+
     // Fazer a requisição POST passando os parâmetros via URL
     return this.http.post(`${this.apiUrl}/cut`, null, { params });
   }
