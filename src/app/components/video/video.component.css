@@ -1,15 +1,97 @@
-/* Define as propriedades dos cursores */
-.cursor {
-  width: 3px;
-  height: 100%;
-  background-color: red;
-  pointer-events: none;
+/* Estilos principais */
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
-#cursor-start {
-  background-color: green;
+.video-container {
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  margin: 0 auto;
 }
 
-#cursor-end {
-  background-color: blue;
+h2 {
+  color: #4a4a4a;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.select-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.dropdown-field {
+  width: 250px;
+}
+
+.video-player-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+video {
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.video-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.mat-raised-button {
+  font-weight: bold;
+  padding: 8px 16px;
+}
+
+.cut-range {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.slider-container {
+  display: flex;
+  justify-content: center;
+}
+
+.slider {
+  width: 250px;
+  margin: 0 auto;
+}
+
+.cut-info {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 8px;
+}
+
+.time-controls {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 15px;
+}
+
+.time-controls label {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+input[type="number"] {
+  width: 80px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }

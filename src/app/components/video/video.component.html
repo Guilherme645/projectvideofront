@@ -1,9 +1,9 @@
-<div class="video-container" style="text-align: center; margin: 20px;">
+<div class="video-container">
   <h2>Player de Vídeo com Corte</h2>
 
   <!-- Dropdown de seleção de pasta -->
-  <div class="select-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <mat-form-field appearance="fill" style="width: 300px;">
+  <div class="select-container">
+    <mat-form-field appearance="fill" class="dropdown-field">
       <mat-label>Escolha uma pasta</mat-label>
       <mat-select [(value)]="selectedFolder" (selectionChange)="onFolderSelected($event.value)">
         <mat-option *ngFor="let folder of folders" [value]="folder">{{ folder }}</mat-option>
@@ -12,8 +12,8 @@
   </div>
 
   <!-- Dropdown de seleção de vídeo -->
-  <div *ngIf="selectedFolder" class="select-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <mat-form-field appearance="fill" style="width: 300px;">
+  <div *ngIf="selectedFolder" class="select-container">
+    <mat-form-field appearance="fill" class="dropdown-field">
       <mat-label>Escolha um vídeo</mat-label>
       <mat-select [(value)]="selectedVideoUrl" (selectionChange)="playVideo($event.value)">
         <mat-option *ngFor="let video of videos" [value]="video">{{ video }}</mat-option>
@@ -22,56 +22,46 @@
   </div>
 
   <!-- Player de vídeo -->
-  <!-- Player de vídeo -->
-  <div *ngIf="selectedVideoUrl" class="video-player-container" style="display: flex; justify-content: center; margin-bottom: 20px;">
-    <video #videoPlayer width="500" controls>
+  <div *ngIf="selectedVideoUrl" class="video-player-container">
+    <video #videoPlayer controls>
       <source [src]="selectedVideoUrl" type="video/mp4">
       Seu navegador não suporta o elemento de vídeo.
     </video>
   </div>
 
   <!-- Barra de Progresso Customizada e Controles -->
-  <div *ngIf="selectedVideoUrl" class="video-actions" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
-    <button mat-raised-button color="primary" (click)="playBetween()">
-      Reproduzir Intervalo
-    </button>
-    <button mat-raised-button color="accent" (click)="toggleLoop()">
-      Loop Intervalo
-    </button>
+  <div *ngIf="selectedVideoUrl" class="video-actions">
+    <button mat-raised-button color="primary" (click)="playBetween()">Reproduzir Intervalo</button>
+    <button mat-raised-button color="accent" (click)="toggleLoop()">Loop Intervalo</button>
+    <button mat-raised-button color="warn" (click)="cortarVideo()">Corte</button>
   </div>
-</div>
 
   <!-- Slider para definir o corte -->
-  <div style="margin-top: 20px;">
-    <h3>Definir Corte</h3>
-    <div style="display: flex; justify-content: center;">
+  <div class="cut-range">
+    <h3>Definir Corte</h3> <br>
+    <div class="slider-container">
       <ngx-slider
         [(value)]="range[0]"
         [(highValue)]="range[1]"
         [options]="cutSliderOptions"
-        style="width: 300px;">
+        class="slider">
       </ngx-slider>
     </div>
-    <div style="display: flex; justify-content: space-around; margin-top: 10px;">
+    <div class="cut-info">
       <span>Início do corte: {{ range[0] | number: '1.0-2' }}s</span>
       <span>Fim do corte: {{ range[1] | number: '1.0-2' }}s</span>
     </div>
   </div>
 
   <!-- Inputs para definir o corte manualmente -->
-  <div class="time-controls" style="display: flex; justify-content: center; gap: 50px; margin-top: 20px;">
+  <div class="time-controls">
     <div>
       <label for="startTime">Início:</label>
-      <input id="startTime" type="number" [(ngModel)]="range[0]" (change)="seekTo(range[0])" min="0" [max]="range[1]" step="0.1" style="width: 100px;">
+      <input id="startTime" type="number" [(ngModel)]="range[0]" (change)="seekTo(range[0])" min="0" [max]="range[1]" step="0.1">
     </div>
     <div>
       <label for="endTime">Fim:</label>
-      <input id="endTime" type="number" [(ngModel)]="range[1]" (change)="seekTo(range[1])" [min]="range[0]" [max]="videoDuration" step="0.1" style="width: 100px;">
+      <input id="endTime" type="number" [(ngModel)]="range[1]" (change)="seekTo(range[1])" [min]="range[0]" [max]="videoDuration" step="0.1">
     </div>
   </div>
-
-    <button mat-raised-button color="warn" (click)="cortarVideo()">
-      Fazer Corte
-    </button>
-  
-
+</div>
