@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { VideoService } from 'src/app/service/video.service';
 import { Options } from '@angular-slider/ngx-slider';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { VideoService } from 'src/app/service/video.service';
 
 @Component({
   selector: 'app-video',
@@ -8,104 +8,148 @@ import { Options } from '@angular-slider/ngx-slider';
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
+  @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef;
   videos: string[] = []; // Lista de vídeos disponíveis
-  selectedVideo: string | null = null; // Vídeo selecionado
-  selectedVideoUrl: string | null = null; // URL do vídeo selecionado para reprodução
+  selectedVideo: string | null = null; // Vídeo selecionado pelo usuário
   currentTime: number = 0; // Tempo atual do vídeo
-  range: number[] = [0, 30]; // Range de corte
-  videoDuration: number = 100; // Duração simulada do vídeo (atualizado ao carregar o vídeo)
-  isLooping: boolean = false; // Define se o vídeo está em loop
-
-  sliderOptions: Options = { floor: 0, ceil: 100, step: 0.1 }; // Opções do slider de reprodução
+  folders: string[] = [];
+  selectedFolder: string | null = null;
+  isLooping: boolean = false;  // Controle de loop
   cutSliderOptions: Options = { floor: 0, ceil: 100, step: 0.1 }; // Opções do slider de corte
+  endTime: number = 0;
+  selectedVideoUrl: string = '';
+  videoDuration: number = 0;
+  range: number[] = [0, 30];
+  sliderOptions = {
+    floor: 0,
+    ceil: 100
+  };
 
-  @ViewChild('videoPlayer') videoPlayer: any;
-
+ 
   constructor(private videoService: VideoService) {}
 
   ngOnInit(): void {
-    this.videoService.listVideos().subscribe(
-      (data) => {
-        this.videos = data;
-      },
-      (error) => {
-        console.error('Erro ao carregar a lista de vídeos', error);
-      }
-    );
+    // Carrega a lista de pastas ao iniciar o componente
+    this.loadFolders();
   }
 
-  // Reproduzir o vídeo selecionado e ajustar a duração do slider
   playVideo(fileName: string): void {
-    this.selectedVideoUrl = this.videoService.getVideoUrl(fileName);
-
-    // Atualizar os sliders com a duração real do vídeo após o carregamento
-    setTimeout(() => {
-      const videoElement = this.videoPlayer.nativeElement;
-      this.videoDuration = videoElement.duration;
-      this.sliderOptions.ceil = this.videoDuration;
-      this.cutSliderOptions.ceil = this.videoDuration;
-    }, 500); // Delay para garantir que o vídeo seja carregado
+  if (this.selectedFolder) {
+    // Chama o método getVideoUrl passando a pasta e o arquivo
+    this.selectedVideoUrl = this.videoService.getVideoUrl(this.selectedFolder, fileName);
+  } else {
+    console.error('Nenhuma pasta selecionada.');
   }
+}
 
+  // Função para atualizar o tempo atual do vídeo
   updateCurrentTime(event: Event): void {
     const videoElement = event.target as HTMLVideoElement;
     this.currentTime = videoElement.currentTime;
-
-    if (this.isLooping && this.currentTime >= this.range[1]) {
-      videoElement.pause(); // Pausa o vídeo antes de alterar o tempo
-      videoElement.currentTime = this.range[0]; // Define o tempo para o início do intervalo
-      setTimeout(() => {
-        videoElement.play(); // Reproduz novamente após um pequeno atraso
-      }, 100); // Pequeno atraso para evitar travamentos
-    }
   }
 
-  // Alterar o tempo de reprodução do vídeo ao ajustar o slider de reprodução
-  onSeek(value: number): void {
-    const videoElement = this.videoPlayer.nativeElement;
-    videoElement.currentTime = value;
-  }
+  cutVideo(): void {
+    const start = this.range[0];
+    const end = this.range[1];
+    const duration = end - start;
+  }  
 
-  // Atualiza o tempo do vídeo ao ajustar manualmente os inputs de tempo
+  // Função para atualizar o tempo ao usar o slider
   seekTo(time: number): void {
     const videoElement = this.videoPlayer.nativeElement;
-    videoElement.currentTime = time;
+    if (videoElement) {
+      videoElement.currentTime = time;
+    }
   }
 
-  // Função para realizar o corte do vídeo
+  // Função para abrir o diálogo de corte de vídeo
+  abrirDialogoCorte(videoName: string): void {
+    this.selectedVideo = videoName;
+  }
+
+  loadFolders(): void {
+    this.videoService.listFolders().subscribe({
+      next: (data: string[]) => {
+        this.folders = data;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar as pastas', err);
+      }
+    });
+  }
+  // Método para carregar vídeos da pasta selecionada
+  onFolderSelected(folderName: string): void {
+    this.selectedFolder = folderName;
+    this.videoService.listVideosFromFolder(folderName).subscribe({
+      next: (data: string[]) => {
+        this.videos = data;
+      },
+      error: (err) => {
+        console.error('Erro ao carregar os vídeos', err);
+      }
+    });
+  }
+
   cortarVideo(): void {
-    if (this.selectedVideo) {
+    if (this.selectedVideoUrl && this.selectedFolder) {
+      // Extrair o nome do arquivo da URL completa
+      const fileName = this.selectedVideoUrl.split('/').pop();
+  
+      if (!fileName) {
+        console.error('Nome do arquivo inválido.');
+        return;
+      }
+  
       const startSeconds = this.range[0];
       const durationSeconds = this.range[1] - this.range[0];
-      this.videoService.cutVideo(this.selectedVideo, startSeconds, durationSeconds).subscribe(
-        (data) => {
-          alert(`Corte feito com sucesso: ${data}`);
-        },
-        (error) => {
-          console.error('Erro ao fazer o corte', error);
-        }
-      );
+  
+      // Chamar o serviço para cortar o vídeo
+      this.videoService.cutVideo(this.selectedFolder, fileName, startSeconds, durationSeconds)
+        .subscribe(
+          response => console.log('Corte realizado com sucesso:', response),
+          error => console.error('Erro ao cortar o vídeo:', error)
+        );
+    } else {
+      console.error('Nenhum vídeo ou pasta foi selecionado.');
     }
   }
 
-
-  // Reproduz o vídeo apenas no intervalo selecionado
-  playBetween(): void {
+  toggleLoop(): void {
     const videoElement = this.videoPlayer.nativeElement;
+    if (videoElement) {
+      videoElement.loop = !videoElement.loop;
+    }
+  }
+
+playBetween(): void {
+  const videoElement = this.videoPlayer.nativeElement;
+  if (videoElement) {
     videoElement.currentTime = this.range[0];
     videoElement.play();
-  }
 
-  // Ativa ou desativa o loop entre o intervalo de corte
-  toggleLoop(): void {
-    this.isLooping = !this.isLooping;
-    const videoElement = this.videoPlayer.nativeElement;
-    if (this.isLooping) {
-      console.log('Looping ativado');
-      videoElement.currentTime = this.range[0];
-      videoElement.play();
-    } else {
-      console.log('Looping desativado');
-    }
+    const stopTime = this.range[1];
+    const checkTime = () => {
+      if (videoElement.currentTime >= stopTime) {
+        videoElement.pause();
+        videoElement.currentTime = this.range[0];
+      } else {
+        requestAnimationFrame(checkTime);
+      }
+    };
+    requestAnimationFrame(checkTime);
   }
+}
+
+ngAfterViewInit() {
+  // O ViewChild só estará disponível após o AfterViewInit
+  if (this.videoPlayer) {
+    const videoElement = this.videoPlayer.nativeElement;
+
+    // Escutar o evento 'loadedmetadata' para obter a duração correta
+    videoElement.addEventListener('loadedmetadata', () => {
+      this.videoDuration = videoElement.duration;
+      this.sliderOptions.ceil = this.videoDuration;
+    });
+  }
+}
 }
