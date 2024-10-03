@@ -13,7 +13,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog'; // Importe MatDialogModule aqui
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 
 @NgModule({
@@ -32,10 +33,11 @@ import { FormsModule } from '@angular/forms';
     MatSnackBarModule,
     MatSelectModule,
     MatDialogModule,
-    NgxSliderModule, 
-    FormsModule, // Adicione o FormsModule aqui
+    NgxSliderModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatInputModule
 
- 
   ],
   providers: [],
   bootstrap: [AppComponent]

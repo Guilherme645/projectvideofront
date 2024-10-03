@@ -1,67 +1,106 @@
-<div class="video-container">
-  <h2>Player de Vídeo com Corte</h2>
+<div class="container" style="max-width: 600px; margin: 0 auto; text-align: center;">
+  <div class="video-container">
+    <h2>Player de Vídeo com Corte</h2>
 
-  <!-- Dropdown de seleção de pasta -->
-  <div class="select-container">
-    <mat-form-field appearance="fill" class="dropdown-field">
-      <mat-label>Escolha uma pasta</mat-label>
-      <mat-select [(value)]="selectedFolder" (selectionChange)="onFolderSelected($event.value)">
-        <mat-option *ngFor="let folder of folders" [value]="folder">{{ folder }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+    <!-- Formulário para enviar o vídeo -->
+    <form (submit)="uploadVideo()" enctype="multipart/form-data" style="margin-bottom: 20px;">
+      <mat-form-field appearance="fill" style="width: 100%; margin-bottom: 20px;">
+        <mat-label>Nome da Subpasta</mat-label>
+        <input matInput [(ngModel)]="subFolderName" name="subFolderName" required>
+      </mat-form-field>
 
-  <!-- Dropdown de seleção de vídeo -->
-  <div *ngIf="selectedFolder" class="select-container">
-    <mat-form-field appearance="fill" class="dropdown-field">
-      <mat-label>Escolha um vídeo</mat-label>
-      <mat-select [(value)]="selectedVideoUrl" (selectionChange)="playVideo($event.value)">
-        <mat-option *ngFor="let video of videos" [value]="video">{{ video }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </div>
+      <input type="file" (change)="onFileSelected($event)" accept="video/*" required />
 
-  <!-- Player de vídeo -->
-  <div *ngIf="selectedVideoUrl" class="video-player-container">
-    <video #videoPlayer controls>
-      <source [src]="selectedVideoUrl" type="video/mp4">
-      Seu navegador não suporta o elemento de vídeo.
-    </video>
-  </div>
+      <button mat-raised-button color="primary" type="submit" style="margin-top: 20px; width: 100%;">
+        Enviar Vídeo
+      </button>
+    </form>
 
-  <!-- Barra de Progresso Customizada e Controles -->
-  <div *ngIf="selectedVideoUrl" class="video-actions">
-    <button mat-raised-button color="primary" (click)="playBetween()">Reproduzir Intervalo</button>
-    <button mat-raised-button color="accent" (click)="toggleLoop()">Loop Intervalo</button>
-    <button mat-raised-button color="warn" (click)="cortarVideo()">Corte</button>
-  </div>
-
-  <!-- Slider para definir o corte -->
-  <div class="cut-range">
-    <h3>Definir Corte</h3> <br>
-    <div class="slider-container">
-      <ngx-slider
-        [(value)]="range[0]"
-        [(highValue)]="range[1]"
-        [options]="cutSliderOptions"
-        class="slider">
-      </ngx-slider>
+    <!-- Dropdown de seleção de pasta -->
+    <div class="select-container" style="margin-bottom: 20px;">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Escolha uma pasta</mat-label>
+        <mat-select [(value)]="selectedFolder" (selectionChange)="onFolderSelected($event.value)">
+          <mat-option *ngFor="let folder of folders" [value]="folder">{{ folder }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="cut-info">
-      <span>Início do corte: {{ range[0] | number: '1.0-2' }}s</span>
-      <span>Fim do corte: {{ range[1] | number: '1.0-2' }}s</span>
-    </div>
-  </div>
 
-  <!-- Inputs para definir o corte manualmente -->
-  <div class="time-controls">
-    <div>
-      <label for="startTime">Início:</label>
-      <input id="startTime" type="number" [(ngModel)]="range[0]" (change)="seekTo(range[0])" min="0" [max]="range[1]" step="0.1">
+    <!-- Dropdown de seleção de vídeo -->
+    <div *ngIf="selectedFolder" class="select-container" style="margin-bottom: 20px;">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Escolha um vídeo</mat-label>
+        <mat-select [(value)]="selectedVideoUrl" (selectionChange)="playVideo($event.value)">
+          <mat-option *ngFor="let video of videos" [value]="video">{{ video }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div>
-      <label for="endTime">Fim:</label>
-      <input id="endTime" type="number" [(ngModel)]="range[1]" (change)="seekTo(range[1])" [min]="range[0]" [max]="videoDuration" step="0.1">
+
+    <!-- Player de vídeo -->
+    <div *ngIf="selectedVideoUrl" class="video-player-container" style="margin-bottom: 20px;">
+      <video #videoPlayer width="100%" controls (loadedmetadata)="onMetadataLoaded(videoPlayer.duration)">
+        <source [src]="selectedVideoUrl" type="video/mp4">
+        Seu navegador não suporta o elemento de vídeo.
+      </video>
+    </div>
+
+    <!-- Dropdown de seleção de pasta de cortes -->
+    <div class="select-container" style="margin-bottom: 20px;">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Escolha uma pasta de cortes</mat-label>
+        <mat-select [(value)]="selectedCutFolder" (selectionChange)="onCutFolderSelected($event.value)">
+          <mat-option *ngFor="let folder of cutFolders" [value]="folder">{{ folder }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Dropdown de seleção de vídeos cortados -->
+    <div *ngIf="selectedCutFolder" class="select-container" style="margin-bottom: 20px;">
+      <mat-form-field appearance="fill" style="width: 100%;">
+        <mat-label>Escolha um vídeo cortado</mat-label>
+        <mat-select [(value)]="selectedCutVideoUrl" (selectionChange)="playCutVideo($event.value)">
+          <mat-option *ngFor="let video of cutVideos" [value]="video">{{ video }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Player de vídeo para vídeo cortado -->
+    <div *ngIf="selectedCutVideoUrl" class="video-player-container" style="margin-bottom: 20px;">
+      <video width="100%" controls>
+        <source [src]="selectedCutVideoUrl" type="video/mp4">
+        Seu navegador não suporta o elemento de vídeo.
+      </video>
+    </div>
+
+    <!-- Barra de Progresso Customizada e Controles -->
+    <div *ngIf="selectedVideoUrl" class="video-actions" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+      <button mat-raised-button color="primary" (click)="playBetween()">Reproduzir Intervalo</button>
+      <button mat-raised-button color="accent" (click)="toggleLoop()">Loop Intervalo</button>
+      <button mat-raised-button color="warn" (click)="cortarVideo()">Cortar</button>
+    </div>
+
+    <!-- Slider para definir o corte -->
+    <div style="margin-top: 20px;">
+      <h3>Definir Corte</h3>
+      <div style="display: flex; justify-content: center;">
+        <ngx-slider [(value)]="range[0]" [(highValue)]="range[1]" [options]="{floor: 0, ceil: videoDuration}" style="width: 100%;"></ngx-slider>
+      </div>
+      <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+        <span>Início: {{ range[0] | number: '1.0-2' }}s</span>
+        <span>Fim: {{ range[1] | number: '1.0-2' }}s</span>
+      </div>
+    </div>
+
+    <!-- Inputs para definir o corte manualmente -->
+    <div class="time-controls" style="display: flex; justify-content: space-around; margin-top: 20px;">
+      <div>
+        <label for="startTime">Início:</label>
+        <input id="startTime" type="number" [(ngModel)]="range[0]" (change)="seekTo(range[0])" min="0" [max]="range[1]" step="0.1" style="width: 100px;">
+      </div>
+      <div>
+        <label for="endTime">Fim:</label>
+        <input id="endTime" type="number" [(ngModel)]="range[1]" (change)="seekTo(range[1])" [min]="range[0]" [max]="videoDuration" step="0.1" style="width: 100px;">
+      </div>
     </div>
   </div>
 </div>
