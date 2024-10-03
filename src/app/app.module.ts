@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatDialogModule } from '@angular/material/dialog'; // Importe MatDialogModule aqui
+import { MatDialogModule } from '@angular/material/dialog'; 
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
