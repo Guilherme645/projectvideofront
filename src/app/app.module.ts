@@ -15,6 +15,7 @@ import { MatDialogModule } from '@angular/material/dialog'; // Importe MatDialog
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 
 @NgModule({
@@ -36,7 +37,8 @@ import { MatInputModule } from '@angular/material/input';
     NgxSliderModule,
     FormsModule,
     ReactiveFormsModule,
-    MatInputModule
+    MatInputModule,
+    MatProgressBarModule
 
   ],
   providers: [],

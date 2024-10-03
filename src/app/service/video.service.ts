@@ -58,5 +58,8 @@ uploadVideo(file: File, subFolderName: string): Observable<any> {
 
   return this.http.post(`${this.apiUrl}/upload`, formData, { responseType: 'text' });
 }
-
+  // Método para monitorar o progresso do corte
+  getCutProgress(folderName: string, fileName: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/video/cut/progress/${folderName}/${fileName}`);
+  }
 }
