@@ -8,14 +8,14 @@
         <mat-label>Nome da pasta</mat-label>
         <input matInput [(ngModel)]="subFolderName" name="subFolderName" required>
       </mat-form-field>
-    
+
       <input type="file" (change)="onFileSelected($event)" accept="video/*" required />
-    
-      <button mat-raised-button color="primary" type="submit" style="margin-top: 20px; width: 100%;">
+<br>
+      <button mat-raised-button type="submit">
         Enviar Vídeo
       </button>
     </form>
-    
+
     <!-- Mensagem de sucesso após o envio -->
     <div *ngIf="uploadSuccessMessage" style="margin-top: 20px; color: green;">
       {{ uploadSuccessMessage }}
@@ -78,26 +78,26 @@
     </div>
 
     <mat-progress-bar
-    *ngIf="isCutting"
-    mode="determinate"
-    [value]="cutProgress * 100"  
-    style="margin-top: 20px;">
-  </mat-progress-bar>
-  
-  <div *ngIf="cutSuccessMessage" style="color: green; margin-top: 20px;">
-    {{ cutSuccessMessage }}
-  </div>
+      *ngIf="isCutting"
+      mode="determinate"
+      [value]="cutProgress * 100"
+      style="margin-top: 20px;">
+    </mat-progress-bar>
+
+    <div *ngIf="cutSuccessMessage" style="color: green; margin-top: 20px;">
+      {{ cutSuccessMessage }}
+    </div>
 
     <!-- Barra de Progresso Customizada e Controles -->
     <div *ngIf="selectedVideoUrl" class="video-actions" style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
-      <button mat-raised-button color="primary" (click)="playBetween()">Reproduzir Intervalo</button>
-      <button mat-raised-button color="accent" (click)="toggleLoop()">
+      <button mat-raised-button (click)="playBetween()">Reproduzir Intervalo</button>
+      <button mat-raised-button (click)="toggleLoop()">
         {{ isLooping ? 'Desativar Loop' : 'Ativar Loop' }}
       </button>
-      <!-- Exibição da mensagem de estado do loop -->
-      <div style="margin-top: 10px; color: blue;">
+      <div style="margin-top: 10px; ">
         {{ loopMessage }}
-      </div>      <button mat-raised-button color="warn" (click)="cortarVideo()">Cortar</button>
+      </div>
+      <button mat-raised-button class="video-actions" (click)="cortarVideo()">Cortar</button>
     </div>
 
     <!-- Slider para definir o corte -->

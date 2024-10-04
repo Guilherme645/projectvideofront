@@ -12,38 +12,39 @@ import { VideoService } from 'src/app/service/video.service';
 })
 export class VideoComponent implements OnInit {
   @ViewChild('videoPlayer', { static: false }) videoPlayer!: ElementRef;
-  
-  videos: string[] = []; 
-  selectedVideo: string | null = null; 
+
+  videos: string[] = [];
+  selectedVideo: string | null = null;
   currentTime: number = 0;
-  folders: string[] = []; 
+  folders: string[] = [];
   selectedFolder: string | null = null;
-  isLooping: boolean = false; 
-  cutSliderOptions: Options = { floor: 0, ceil: 100, step: 0.1 }; 
+  isLooping: boolean = false;
+  cutSliderOptions: Options = { floor: 0, ceil: 100, step: 0.1 };
   endTime: number = 0;
   selectedVideoUrl: string | null = null;
   videoDuration: number = 100;
-  range: number[] = [0, 30]; 
+  range: number[] = [0, 30];
   sliderOptions = { floor: 0, ceil: 100 };
-  cutFolders: string[] = []; 
+  cutFolders: string[] = [];
   cutVideos: string[] = [];
   selectedCutFolder: string | null = null;
   selectedCutVideoUrl: string | null = null;
   selectedFile: File | null = null;
-  subFolderName: string = ''; 
+  subFolderName: string = '';
   isCutting = false;
-  cutProgress = 0; 
+  cutProgress = 0;
   cutSuccessMessage: string | null = null;
-  loopMessage: string = 'Loop desativado'; 
+  loopMessage: string = 'Loop desativado';
   uploadSuccessMessage: string = '';
   private progressSubscription!: Subscription;
-  private loopListener: any; 
+  private loopListener: any;
 
   constructor(private videoService: VideoService, private sanitizer: DomSanitizer,private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
-    this.loadFolders(); 
-    this.loadCutFolders(); 
+    this.loadFolders();
+    this.loadCutFolders();
+
   }
 
   playVideo(fileName: string): void {
@@ -95,7 +96,7 @@ export class VideoComponent implements OnInit {
           if (progress >= 1) {
             console.log('Corte concluído!');
             this.isCutting = false;
-            this.cutSuccessMessage = 'Corte feito com sucesso!'; 
+            this.cutSuccessMessage = 'Corte feito com sucesso!';
             this.progressSubscription.unsubscribe();
           }
         },
@@ -111,7 +112,7 @@ export class VideoComponent implements OnInit {
   toggleLoop(): void {
     const videoElement = this.videoPlayer.nativeElement;
     if (videoElement) {
-      this.isLooping = !this.isLooping; 
+      this.isLooping = !this.isLooping;
       if (this.isLooping) {
         this.loopMessage = 'Loop acionado';
         videoElement.currentTime = this.range[0];
